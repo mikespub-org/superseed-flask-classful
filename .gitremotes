@@ -1,0 +1,3 @@
+[remote "upstream"]
+	url = https://github.com/superseed/flask-classful.git
+	fetch = +refs/heads/*:refs/remotes/upstream/*
