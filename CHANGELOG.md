@@ -1,3 +1,11 @@
+2023-03-09 Jérôme Tamba <jerome@ta.mba>
+---------------------------------------
+
+    Version: 0.16.0
+
+    - Improvements:
+        * Merge werkzeug-2.2 branch from https://github.com/superseed/flask-classful
+
 2021-12-25 Hoat Le <hoatle@teracy.com>
 --------------------------------------
 
