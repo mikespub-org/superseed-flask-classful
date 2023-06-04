@@ -45,7 +45,7 @@ setup(
     include_package_data=True,
     platforms='any',
     install_requires=[
-        'Flask>=0.12.5'
+        'Flask>=2.2.3'
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
