@@ -47,7 +47,9 @@ source = ["src", "*/site-packages"]
 src = ["src"]
 fix = true
 show-fixes = true
-show-source = true
+output-format = "full"
+
+[tool.ruff.lint]
 select = [
     "B",  # flake8-bugbear
     "E",  # pycodestyle error
@@ -57,7 +59,7 @@ select = [
     "UP",  # pyupgrade
     "W",  # pycodestyle warning
 ]
-ignore-init-module-imports = true
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 force-single-line = true
+order-by-type = false
