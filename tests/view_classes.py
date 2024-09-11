@@ -572,13 +572,9 @@ class DecoratedAppendClassAttributeView(FlaskView):
 
 class InspectArgsView(FlaskView):
     def foo(self, arg1, arg2, kwarg1=678):
-        return "foo {}({}) {}({}) {}({})".format(
-            type(arg1).__name__,
-            arg1,
-            type(arg2).__name__,
-            arg2,
-            type(kwarg1).__name__,
-            kwarg1,
+        return (
+            f"foo {type(arg1).__name__}({arg1})"
+            f" {type(arg2).__name__}({arg2}) {type(kwarg1).__name__}({kwarg1})"
         )
 
 
@@ -610,13 +606,9 @@ class NoInspectArgsView(FlaskView):
 
     @coerce(arg1=int, arg2=int, kwarg1=int)
     def foo(self, arg1=1, arg2=2, kwarg1=678):
-        return "foo {}({}) {}({}) {}({})".format(
-            type(arg1).__name__,
-            arg1,
-            type(arg2).__name__,
-            arg2,
-            type(kwarg1).__name__,
-            kwarg1,
+        return (
+            f"foo {type(arg1).__name__}({arg1})"
+            f" {type(arg2).__name__}({arg2}) {type(kwarg1).__name__}({kwarg1})"
         )
 
 
