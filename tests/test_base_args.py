@@ -38,19 +38,12 @@ class MultiRouteBaseArgsView(FlaskView):
         )
 
 
-class OtherRouteBaseArgsView(FlaskView):
-    route_base = "/route/<arg_1>/other"
-
-    def get(self, arg_1, arg_2):
-        return (
-            jsonify(
-                {
-                    "arg_1": arg_1,
-                    "arg_2": arg_2,
-                }
-            ),
-            200,
-        )
+def make_user_schema(request):
+    # Filter based on 'fields' query parameter
+    only = request.args.get("fields", None)
+    # Respect partial updates for PATCH requests
+    partial = request.method == "PATCH"
+    return UserSchema(only=only, partial=partial)
 
 
 class ErroneousRouteBaseArgsView(FlaskView):
@@ -73,12 +66,82 @@ OtherRouteBaseArgsView.register(app)
 ErroneousRouteBaseArgsView.register(app)
 
 
-def test_no_route_args():
-    _, base_args = NoRouteBaseArgsView.get_route_base()
-    # No route base with args == no base args
-    assert base_args == set()
-    client = app.test_client()
-    resp = client.get("/route/without/args/foo/")
+def make_quote_schema(request):
+    # Filter based on 'fields' query parameter
+    only = request.args.get("fields", None)
+    # Respect partial updates for PATCH requests
+    partial = request.method == "PATCH"
+    return QuoteSchema(only=only, partial=partial)
+
+
+class QuotesView(FlaskView):
+    base_args = ["args"]
+
+    def index(self):
+        return "<br>".join(quotes)
+
+    def get(self, id):
+        quote_id = int(id)
+        if quote_id < len(quotes) - 1:
+            return quotes[quote_id]
+        else:
+            return "Not Found", 404
+
+    @use_args(put_args)
+    def put(self, args, id):
+        quote_id = int(id)
+        if quote_id >= len(quotes) - 1:
+            return "Not Found", 404
+        quotes[quote_id] = args["text"]
+        return quotes[quote_id]
+
+    @route("<id>/", methods=["PATCH"])
+    @use_args(make_quote_schema)
+    def factory(self, args, id):
+        quote_id = int(id)
+        if quote_id >= len(quotes) - 1:
+            return "Not Found", 404
+        quotes[quote_id] = args["text"]
+        return quotes[quote_id]
+
+
+class UglyNameView(FlaskView):
+    base_args = ["args"]
+    route_base = "quotes-2"
+
+    def index(self):
+        return "<br>".join(quotes)
+
+    def get(self, id):
+        quote_id = int(id)
+        if quote_id < len(quotes) - 1:
+            return quotes[quote_id]
+        else:
+            return "Not Found", 404
+
+    @use_args(put_args)
+    def put(self, args, id):
+        quote_id = int(id)
+        if quote_id >= len(quotes) - 1:
+            return "Not Found", 404
+        quotes[quote_id] = args["text"]
+        return quotes[quote_id]
+
+
+QuotesView.register(app)
+UglyNameView.register(app)
+UsersView.register(app)
+
+client = app.test_client()
+
+input_headers = [("Content-Type", "application/json")]
+input_data = {"text": "My quote"}
+
+
+def test_users_post():
+    resp = client.post(
+        "users/", headers=input_headers, data=json.dumps({"email": "test@example.com"})
+    )
     assert resp.status_code == 200
     assert resp.json == {"arg_1": "foo"}
 
